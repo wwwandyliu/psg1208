@@ -1,0 +1,31 @@
+name: Build PSG1208 OpenWRT firmware
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "extroot = 基础固件(Tailscale装U盘, 推荐) / builtin = 内置Tailscale(可能溢出)"
+        required: true
+        default: "extroot"
+        type: choice
+        options:
+          - extroot
+          - builtin
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build firmware
+        run: |
+          chmod +x build_psg1208_tailscale.sh
+          MODE="${{ github.event.inputs.mode }}" ./build_psg1208_tailscale.sh
+
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: psg1208-firmware
+          path: ib_psg1208/openwrt-imagebuilder-*/bin/targets/ramips/mt7620/*.bin
+          retention-days: 30
