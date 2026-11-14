@@ -18,6 +18,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y coreutils build-essential libncurses5-dev \
+            zlib1g-dev gawk git unzip file wget
+
       - name: Build firmware
         run: |
           chmod +x build_psg1208_tailscale.sh
