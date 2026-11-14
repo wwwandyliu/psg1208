@@ -29,9 +29,17 @@ jobs:
           chmod +x build_psg1208_tailscale.sh
           MODE="${{ github.event.inputs.mode }}" ./build_psg1208_tailscale.sh
 
+      - name: Collect build outputs and logs
+        if: always()
+        run: |
+          mkdir -p out
+          cp -a ib_psg1208/openwrt-imagebuilder-*/bin/targets/ramips/mt7620/ out/ 2>/dev/null || true
+          cp -a ib_psg1208/openwrt-imagebuilder-*/logs/ out/ 2>/dev/null || true
+
       - name: Upload firmware artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: psg1208-firmware
-          path: ib_psg1208/openwrt-imagebuilder-*/bin/targets/ramips/mt7620/*.bin
+          path: out/
           retention-days: 30
